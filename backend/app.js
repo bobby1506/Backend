@@ -5,7 +5,7 @@ const cookieParser=require("cookie-parser");
 const bodyParser = require("body-parser");
 const fileUpload= require("express-fileupload");
 const errorMiddleware= require("./middleware/error");
-const path = require("path");
+// const path = require("path");
 //config
 dotenv.config({path:"backend/config/config.env"})
 
@@ -33,11 +33,11 @@ app.use("/api/v1", contact);
 // app.use("/api/v1", cart);
 //middlewares for errors
 
-app.use(express.static(path.join(__dirname, "../frontend/build")));
+// app.use(express.static(path.join(__dirname, "../frontend/build")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "../frontend/build/index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, "../frontend/build/index.html"));
+// });
 
 
 app.use(errorMiddleware);
