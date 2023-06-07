@@ -7,7 +7,7 @@ const fileUpload= require("express-fileupload");
 const errorMiddleware= require("./middleware/error");
 // const path = require("path");
 //config
-dotenv.config({path:"backend/config/config.env"})
+dotenv.config({path:"./config/config.env"})
 
 app.use(express.json());
 app.use(cookieParser());
