@@ -1,7 +1,6 @@
 // const Razorpay =require("razorpay");
 const app=require("./app");
 const cloudinary= require("cloudinary");
-const dotenv=require("dotenv");
 const connectDatabase=require("./config/database");
 
 //handle uncaught exception
@@ -16,8 +15,10 @@ process.on("uncaughtException", (err)=>{
 
 
 //config
+if(process.env.NODE_ENV!=="PRODUCTION"){
 
-dotenv.config({path:"./config/config.env"})
+    require("dotenv").config({path:"./config/config.env"})
+}
 
 
 //connecting to database
