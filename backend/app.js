@@ -42,7 +42,11 @@ app.use("/api/v1", contact);
 //   res.sendFile(path.resolve(__dirname, "../frontend/build/index.html"));
 // });
 
-
+app.get('*',(req,res,next)=>{
+    res.status(200).json({
+      message:'bad request'
+    })
+  })
 app.use(errorMiddleware);
 
 module.exports=app;
