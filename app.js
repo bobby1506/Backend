@@ -1,5 +1,8 @@
 const express = require("express");
 const app=express();
+const cors = require('cors');
+
+
 // const dotenv=require("dotenv");
 const cookieParser=require("cookie-parser");
 const bodyParser = require("body-parser");
@@ -11,7 +14,9 @@ if(process.env.NODE_ENV!=="PRODUCTION"){
 
     require("dotenv").config({path:"./config/config.env"})
 }
-
+app.use(cors({
+  origin: 'https://greenglobalaggrovationfrontend.onrender.com'
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
