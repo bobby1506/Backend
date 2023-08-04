@@ -27,7 +27,7 @@
     "nodemon": "^2.0.22",
     "pagination": "^0.4.6",
     "path": "^0.12.7",
-    "razorpay": "^2.8.6",
+    "razorpay": "^2.9.0",
     "stripe": "^12.7.0",
     "validator": "^13.9.0"
   }

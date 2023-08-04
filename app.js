@@ -15,29 +15,30 @@ if(process.env.NODE_ENV!=="PRODUCTION"){
     require("dotenv").config({path:"./config/config.env"})
 }
 app.use(cors({
-  origin: 'https://greenglobalaggrovationfrontend.onrender.com'
+  origin: ['https://greenglobalaggrovationfrontend.onrender.com', 'http://localhost:1000'],
 }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.urlencoded({extended: true}));
 app.use(fileUpload());
 
 //route imports
 const product= require("./routes/productRoute");
 const user =require("./routes/userRoute");
 const order =require("./routes/orderRoute");
-const payment =require("./routes/paymentRoute");
+// const payment =require("./routes/paymentRoute");
 const contact=require("./routes/contactRoute");
 
-// const payment2=require("./routes/payment2Route");
+const payment2=require("./routes/payment2Route");
 // const cart =require("./routes/cartRoute");
 
 app.use("/api/v1", product);
 app.use("/api/v1", user);
 app.use("/api/v1", order);
-app.use("/api/v1", payment);
+// app.use("/api/v1", payment);
 app.use("/api/v1", contact);
-// app.use("/api/v1", payment2);
+app.use("/api/v1", payment2);
 // app.use("/api/v1", cart);
 //middlewares for errors
 
@@ -46,6 +47,9 @@ app.use("/api/v1", contact);
 // app.get("*", (req, res) => {
 //   res.sendFile(path.resolve(__dirname, "../frontend/build/index.html"));
 // });
+app.get("/api/v1/getkey", (req, res) =>
+  res.status(200).json({ key: process.env.RAZORPAY_API_KEY })
+);
 
 app.get('*',(req,res,next)=>{
     res.status(200).json({
