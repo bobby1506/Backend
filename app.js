@@ -10,8 +10,7 @@ const fileUpload= require("express-fileupload");
 const errorMiddleware= require("./middleware/error");
 // const path = require("path");
 //config
-if(process.env.NODE_ENV!=="PRODUCTION"){
-
+if(process.env.NODE_ENV!="PRODUCTION"){
     require("dotenv").config({path:"./config/config.env"})
 }
 app.use(cors({
