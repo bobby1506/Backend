@@ -4,6 +4,7 @@ const catchAsyncError = require("../middleware/catchAsyncError");
 const sendToken = require("../utils/jwtToken");
 const sendEmail=require("../utils/sendEmail.js");
 const cloudinary= require("cloudinary");
+const isAuthenticated = require("../middleware/auth");
 //Register a USER
 exports.registerUser = catchAsyncError(async (req, res, next) => {
 
@@ -143,16 +144,42 @@ exports.resetPassword = catchAsyncError(async (req, res, next) => {
 
 //Get user detail
 
-exports.getUserDetails=catchAsyncError(async (req, res, next)=>{
+// exports.getUserDetails=catchAsyncError(async (req, res, next)=>{
 
-  const user=await User.findById(req.user.id);
+//   const user=await User.findById(req.user.id);
 
-  res.status(200).json({
-    success:true,
-    user,
+//   res.status(200).json({
+//     success:true,
+//     user,
+    
+//   });
+// });
+// Import necessary modules and models
 
-  });
+exports.getUserDetails = catchAsyncError(async (req, res, next) => {
+  // Check if the user is authenticated (you should have middleware for this)
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  }
+
+  try {
+    if (!req.user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+
+    const user = req.user;
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
 });
+
 
 //UPDATE user password
 
