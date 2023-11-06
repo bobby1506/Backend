@@ -14,7 +14,7 @@ if(process.env.NODE_ENV!="PRODUCTION"){
     require("dotenv").config({path:"./config/config.env"})
 }
 app.use(cors({
-  origin: ['https://greenglobalaggrovationfrontend.onrender.com', 'http://localhost:1000'],
+  origin: ['https://greenglobalaggrovationfrontend.onrender.com'],
 }));
 app.use(express.json());
 app.use(cookieParser());
