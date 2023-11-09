@@ -158,9 +158,9 @@ exports.resetPassword = catchAsyncError(async (req, res, next) => {
 
 exports.getUserDetails = catchAsyncError(async (req, res, next) => {
   // Check if the user is authenticated (you should have middleware for this)
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ success: false, message: "Unauthorized" });
-  }
+  // if (!req.isAuthenticated()) {
+  //   return res.status(401).json({ success: false, message: "Unauthorized" });
+  // }
 
   try {
     if (!req.user) {
@@ -168,7 +168,8 @@ exports.getUserDetails = catchAsyncError(async (req, res, next) => {
     }
 
 
-    const user = req.user;
+    const {user} = req;
+    console.log('😂😂😂😂', JSON.stringify(user, null, 2));
 
     res.status(200).json({
       success: true,
