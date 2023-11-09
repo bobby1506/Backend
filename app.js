@@ -13,7 +13,10 @@ const errorMiddleware= require("./middleware/error");
 if(process.env.NODE_ENV!="PRODUCTION"){
     require("dotenv").config({path:"./config/config.env"})
 }
-app.use(cors());
+app.use(cors({
+  credentials: true,
+  origin: ['https://greenglobalaggrovation2.netlify.app', 'http://localhost:3000', 'https://greenglobalaggrovationfrontend.onrender.com']
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
