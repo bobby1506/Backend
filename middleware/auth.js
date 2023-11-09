@@ -7,6 +7,7 @@ exports.isAuthenticatedUser=catchAsyncError(async (req, res, next)=>{
     const {token}= req.cookies;
     
      if(!token){
+        console.log('COOKIE NOT FOUND 😒😒😒😒😒😒')
         return next(new ErrorHandler("Please login to access this resource", 401));
      }
 
