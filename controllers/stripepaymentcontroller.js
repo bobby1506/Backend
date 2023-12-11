@@ -9,11 +9,11 @@ exports.processPayment= catchAsyncError(async (req,res, next)=>{
     const myPayment= await stripe.paymentIntents.create({
         
          amount: req.body.amount,
-         currency: "usd",
+         currency: "inr",
          metadata:{
             company: "GREEN GLOBAL AGGROVATION",
          },
-         automatic_payment_methods: {enabled: true},
+        //  automatic_payment_methods: {enabled: true},
     });
     console.log("error");
     res.status(200)
