@@ -7,12 +7,12 @@ exports.isAuthenticatedUser=catchAsyncError(async (req, res, next)=>{
     const {token}= req.cookies;
     
      if(!token){
-        // console.log('COOKIE NOT FOUND 😒😒😒😒😒😒')
+        console.log('COOKIE NOT FOUND 😒😒😒😒😒😒')
         return next(new ErrorHandler("Please login to access this resource", 401));
      }
 
      const decodedData= jwt.verify(token, process.env.JWT_SECRET);
-    //  console.log('💣💣💣💣💣', decodedData.id);
+     console.log('💣💣💣💣💣', decodedData.id);
     req.user= await User.findById(decodedData.id);
 
     next();
