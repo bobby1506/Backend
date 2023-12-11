@@ -97,6 +97,7 @@
 // });
 
 
+
 const app = require("./app");
 const cloudinary = require("cloudinary");
 const connectDatabase = require("./config/database");
@@ -109,7 +110,7 @@ process.on("uncaughtException", (err) => {
 });
 
 // Configuration
-if (process.env.NODE_ENV !== "PRODUCTION") {
+if (process.env.NODE_ENV !== "production") {
   require("dotenv").config({ path: "./config/config.env" });
 }
 
@@ -138,5 +139,6 @@ connectDatabase(() => {
     });
   });
 });
+
 
 
