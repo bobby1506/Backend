@@ -15,7 +15,8 @@ if(process.env.NODE_ENV!="PRODUCTION"){
 }
 app.use(cors({
   credentials: true,
-  origin: [ 'http://localhost:3000', 'https://greenglobalaggrovationfrontend.onrender.com', 'https://greenglobalaggrovation.com']
+  origin: [ 'http://localhost:3000', 'https://greenglobalaggrovationfrontend.onrender.com', 'https://greenglobalaggrovation.com'],
+  allowedHeaders: ['Content-Type', 'application/json'],
 }));
 app.use(express.json());
 app.use(cookieParser());
