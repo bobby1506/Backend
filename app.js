@@ -27,10 +27,10 @@ app.use(fileUpload());
 const product= require("./routes/productRoute");
 const user =require("./routes/userRoute");
 const order =require("./routes/orderRoute");
-// const payment =require("./routes/paymentRoute");
+const payment =require("./routes/striperoute");
 const contact=require("./routes/contactRoute");
 
-const payment2=require("./routes/payment2Route");
+// const payment2=require("./routes/payment2Route");
 // const cart =require("./routes/cartRoute");
 
 app.use("/api/v1", product);
@@ -38,7 +38,7 @@ app.use("/api/v1", user);
 app.use("/api/v1", order);
 // app.use("/api/v1", payment);
 app.use("/api/v1", contact);
-app.use("/api/v1", payment2);
+app.use("/api/v1", payment);
 // app.use("/api/v1", cart);
 //middlewares for errors
 
@@ -47,9 +47,9 @@ app.use("/api/v1", payment2);
 // app.get("*", (req, res) => {
 //   res.sendFile(path.resolve(__dirname, "../frontend/build/index.html"));
 // });
-app.get("/api/v1/getkey", (req, res) =>
-  res.status(200).json({ key: process.env.RAZORPAY_API_KEY })
-);
+// app.get("/api/v1/getkey", (req, res) =>
+//   res.status(200).json({ key: process.env.RAZORPAY_API_KEY })
+// );
 
 app.get('*',(req,res,next)=>{
     res.status(200).json({
