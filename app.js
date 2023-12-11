@@ -15,7 +15,7 @@ if(process.env.NODE_ENV!="PRODUCTION"){
 }
 app.use(cors({
   credentials: true,
-  origin: ['https://greenglobalaggrovation2.netlify.app', 'http://localhost:3000', 'https://greenglobalaggrovationfrontend.onrender.com', 'https://greenglobalaggrovation.com/']
+  origin: ['https://greenglobalaggrovation2.netlify.app', 'http://localhost:3000', 'https://greenglobalaggrovationfrontend.onrender.com', 'https://greenglobalaggrovation.com']
 }));
 app.use(express.json());
 app.use(cookieParser());
