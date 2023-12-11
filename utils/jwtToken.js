@@ -14,7 +14,7 @@ const sendToken=(user, statusCode, res)=>{
     };
 
     // res.cookie("token_ios", token, {}})
-    res.setHeader("Access-Control-Allow-Origin", "*");
+   
 
     res.status(statusCode).cookie("token", token, options).json({
         success:true,
