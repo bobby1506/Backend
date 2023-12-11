@@ -17,8 +17,6 @@ app.use(
   cors({
     credentials: true,
     origin: ['http://localhost:3000', 'https://greenglobalaggrovationfrontend.onrender.com', 'https://greenglobalaggrovation.com'],
-    methods: ['POST', 'GET', 'PUT'],
-    allowedHeaders: ['Content-Type'],
   })
 );
 app.use(express.json());
