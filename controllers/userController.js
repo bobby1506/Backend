@@ -169,7 +169,7 @@ exports.getUserDetails = catchAsyncError(async (req, res, next) => {
 
 
     const {user} = req;
-    console.log('😂😂😂😂', JSON.stringify(user, null, 2));
+    // console.log('😂😂😂😂', JSON.stringify(user, null, 2));
 
     res.status(200).json({
       success: true,
