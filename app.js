@@ -16,7 +16,7 @@ if(process.env.NODE_ENV!="PRODUCTION"){
 app.use(
   cors({
     credentials: true,
-    origin: ['http://localhost:3000', 'https://greenglobalaggrovationfrontend.onrender.com', 'https://greenglobalaggrovation.com'],
+    origin: ['http://localhost:3000','http://localhost:5173', 'https://greenglobalaggrovationfrontend.onrender.com', 'https://greenglobalaggrovation.com'],
   })
 );
 app.use(express.json());
