@@ -17,6 +17,8 @@ const passport = require("passport");
 require("dotenv").config();
 require("./utils/passport");
 
+app.set("trust proxy", 1);
+
 //initial config
 app.use(express.json());
 app.use(cookieParser());
