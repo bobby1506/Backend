@@ -9,17 +9,14 @@
 //     console.log(`Shutting down the server due to uncaght exception`);
 
 //         process.exit(1);
-    
+
 // });
-
-
 
 // //config
 // if(process.env.NODE_ENV!=="PRODUCTION"){
 
 //     require("dotenv").config({path:"./config/config.env"})
 // }
-
 
 // //connecting to database
 // connectDatabase();
@@ -36,8 +33,6 @@
 //     console.log(`server is listening on https://localhost:${process.env.PORT}`)
 
 // });
-
-
 
 // //unhandled promise rejection
 // process.on("unhandledRejection",(err)=>{
@@ -96,8 +91,6 @@
 //   });
 // });
 
-
-
 const app = require("./app");
 const cloudinary = require("cloudinary");
 const connectDatabase = require("./config/database");
@@ -111,7 +104,7 @@ process.on("uncaughtException", (err) => {
 
 // Configuration
 if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config({ path: "./config/config.env" });
+  require("dotenv").config();
 }
 
 // Connecting to the database
@@ -139,6 +132,3 @@ connectDatabase(() => {
     });
   });
 });
-
-
-

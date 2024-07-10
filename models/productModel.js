@@ -6,6 +6,7 @@ const productSchema = mongoose.Schema({
     required: [true, "Please Enter product Name"],
     trim: true,
   },
+  tagline: { type: String },
   description: {
     type: String,
     required: [true, "Please Enter product Description"],
@@ -47,7 +48,8 @@ const productSchema = mongoose.Schema({
   },
   reviews: [
     {
-      user: {
+      avatar: { type: String, required: true },
+      userId: {
         type: mongoose.Schema.ObjectId,
         ref: "User",
         required: true,
