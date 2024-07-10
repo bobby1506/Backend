@@ -55,6 +55,7 @@ app.use(
       "http://localhost:3000",
       "http://localhost:5173",
       "https://greenglobalaggrovationfrontend.onrender.com",
+      "https://greenglobalaggrovation-8129.onrender.com",
       "https://greenglobalaggrovation.com",
     ],
   })
