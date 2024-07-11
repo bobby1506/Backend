@@ -59,6 +59,7 @@ app.use(
       "https://greenglobalaggrovationfrontend.onrender.com",
       "https://greenglobalaggrovation-8129.onrender.com",
       "https://greenglobalaggrovation.com",
+      "https://www.greenglobalaggrovation.com",
     ],
   })
 );
