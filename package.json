@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cloudinary": "^1.37.0",
@@ -22,6 +23,7 @@
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
     "express-session": "^1.18.0",
+    "gga-ecommerce": "file:",
     "jsonwebtoken": "^9.0.0",
     "mongodb": "^5.6.0",
     "mongoose": "^7.0.3",
@@ -32,7 +34,9 @@
     "passport-google-oauth20": "^2.0.0",
     "path": "^0.12.7",
     "razorpay": "^2.9.0",
+    "sha256": "^0.2.0",
     "stripe": "^12.7.0",
+    "uniqid": "^5.4.0",
     "validator": "^13.9.0"
   }
 }

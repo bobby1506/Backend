@@ -5,11 +5,14 @@ const fileUpload = require("express-fileupload");
 const express = require("express");
 const app = express();
 
+
 const errorMiddleware = require("./middleware/error");
 const product = require("./routes/productRoute");
 const user = require("./routes/userRoute");
 const order = require("./routes/orderRoute");
-const payment = require("./routes/striperoute");
+const phonepayPayment= require("./routes/phonepayRoute");
+// const payment = require("./routes/striperoute");
+
 const contact = require("./routes/contactRoute");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
@@ -25,6 +28,15 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
 app.use(fileUpload());
+
+// setting up middleware
+// app.use(bodyParser.json());
+
+// app.use(
+//   bodyParser.urlencoded({
+//     extended: false,
+//   })
+// );
 
 //session config
 app.use(
@@ -70,7 +82,11 @@ app.use("/api/v1", user);
 app.use("/api/v1", order);
 // app.use("/api/v1", payment);
 app.use("/api/v1", contact);
-app.use("/api/v1", payment);
+app.use("/api/v1", phonepayPayment);
+// app.use("/api/v1", payment);
+
+
+
 
 app.get("/", (req, res) => {
   res.send("Hello World");
@@ -81,6 +97,8 @@ app.get("*", (req, res, next) => {
     message: "bad request",
   });
 });
+
+
 app.use(errorMiddleware);
 
 module.exports = app;

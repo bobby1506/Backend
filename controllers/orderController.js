@@ -3,6 +3,146 @@ const Product = require("../models/productModel");
 const ErrorHandler = require("../utils/errorhandler");
 const catchAsyncErrors = require("../middleware/catchAsyncError");
 
+
+//phonepay order controller
+
+// Controller function to create a new order
+exports.createOrder = async (req, res, next) => {
+  // console.log("hello");
+  try {
+    const { shippingInfo, orderItems, user, itemsPrice, taxPrice, shippingPrice, totalPrice } = req.body;
+
+  
+    console.log('Request Body:', req.body);
+
+    // Validate input data
+    if (!shippingInfo || !orderItems || !user || !itemsPrice || !taxPrice || !shippingPrice || !totalPrice) {
+      console.log('Missing required fields for order creation.');
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide all necessary fields to create an order.'
+      });
+    }
+
+   
+    if (orderItems.length === 0) {
+      console.log('No order items found.');
+      return res.status(400).json({
+        success: false,
+        message: 'No order items found.'
+      });
+    }
+
+ 
+    console.log('Creating order with the following details:');
+    console.log('Shipping Info:', shippingInfo);
+    console.log('Order Items:', orderItems);
+    console.log('User:', user);
+    console.log('Items Price:', itemsPrice);
+    console.log('Tax Price:', taxPrice);
+    console.log('Shipping Price:', shippingPrice);
+    console.log('Total Price:', totalPrice);
+
+    // Create a new order in the database
+    const neworder = await Order({
+      shippingInfo,
+      orderItems,
+      user,
+      itemsPrice,
+      taxPrice,
+      shippingPrice,
+      totalPrice,
+      paidAt: Date.now(), 
+      // orderStatus: 'Processing' 
+    });
+
+    const orders= await neworder.save();
+    // Log the created order details
+    // console.log('Order created successfully:', order);
+
+    // Return success response with created order details
+    return res.status(200).json({
+      success: true,
+      message: 'Order created successfully.',
+      placeOrders:orders,
+    });
+
+    } catch (error) {
+      
+    console.error('Error creating order:', error.message);
+    
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error occurred while creating the order.',
+      error: error.message
+    });
+   
+  }
+};
+
+// exports.placeOrder = catchAsyncErrors(async (req, res, next) => {
+//   const {
+//     shippingInfo,
+//     orderItems,
+//     paymentInfo,
+//     itemsPrice,
+//     taxPrice,
+//     shippingPrice,
+//     totalPrice,
+//   } = req.body;
+
+//   const order = await Order.create({
+//     shippingInfo,
+//     orderItems,
+//     paymentInfo,
+//     itemsPrice,
+//     taxPrice,
+//     shippingPrice,
+//     totalPrice,
+//     paidAt: Date.now(),
+//     user: req.user,
+//   });
+
+//   res.status(201).json({
+//     success: true,
+//     order:"hello",
+//   });
+// });
+
+
+//find order
+// API to find an order by ID and show details
+exports.getOrderDetails = catchAsyncErrors(async (req, res, next) => {
+  const { orderId } = req.params;
+
+  // Check if orderId is provided
+  if (!orderId) {
+    return res.status(400).json({ message: "Order ID is required" });
+  }
+
+  try {
+    // Find the order by ID in the database
+    const order = await Order.findById(orderId).populate('user', 'name email'); // Populate user if needed
+
+    // If order is not found, send an error response
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Send the order details as a response
+    res.status(200).json({
+      success: true,
+      data: order,
+    });
+  } catch (error) {
+    console.error("Error fetching order details:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch order details",
+    });
+  }
+});
+
 // Create new Order
 exports.newOrder = catchAsyncErrors(async (req, res, next) => {
   const {
