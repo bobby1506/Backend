@@ -65,16 +65,16 @@ app.use(passport.session());
 app.use(
   cors({
     credentials: true,
-    // origin: [
-    //   "http://localhost:3000",
-    //   "http://localhost:5173",
-    //   "https://greenglobalaggrovationfrontend.onrender.com",
-    //   "https://greenglobalaggrovation-8129.onrender.com",
-    //   "https://greenglobalaggrovation.com",
-    //   "https://www.greenglobalaggrovation.com",
-    //   "https://mercury.phonepe.com",
-    //   "https://mercury-t2.phonepe.com"
-    // ],
+    origin: [
+      "https://mercury.phonepe.com",
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "https://greenglobalaggrovationfrontend.onrender.com",
+      "https://greenglobalaggrovation-8129.onrender.com",
+      "https://greenglobalaggrovation.com",
+      "https://www.greenglobalaggrovation.com",
+      "https://mercury-t2.phonepe.com"
+    ],
   })
 );
 
