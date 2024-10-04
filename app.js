@@ -73,6 +73,7 @@ app.use(
       "https://greenglobalaggrovation.com",
       "https://www.greenglobalaggrovation.com",
       "https://mercury.phonepe.com",
+      "https://mercury-t2.phonepe.com"
     ],
   })
 );
