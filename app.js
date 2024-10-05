@@ -66,9 +66,9 @@ app.use(
   cors({
     credentials: true,
     origin: [
-      "https://mercury.phonepe.com",
+      "https://mercury.phonepe.com/transact",
       "http://localhost:3000",
-      "https://backend-amber-alpha-12.vercel.app",
+      "https://backend-amber-alpha-12.vercel.app/api/v1",
       "http://localhost:5173",
       "https://greenglobalaggrovationfrontend.onrender.com",
       "https://greenglobalaggrovation-8129.onrender.com",

@@ -43,7 +43,7 @@ exports.initiatePayment = catchAsyncError(async function (req, res, next) {
       merchantUserId: userId,
       amount: order.totalPrice * 100, // Price in paise
       redirectUrl: `${APP_BE_URL}/payment/validate/${merchantTransactionId}`, // Redirect URL post-payment
-      redirectMode: 'POST',
+      redirectMode: "REDIRECT",
       mobileNumber: order.shippingInfo.phoneNo, // Mobile number from order
       paymentInstrument: { type: "PAY_PAGE" },
     };
