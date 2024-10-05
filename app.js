@@ -74,7 +74,8 @@ app.use(
       "https://greenglobalaggrovation-8129.onrender.com",
       "https://greenglobalaggrovation.com",
       "https://www.greenglobalaggrovation.com",
-      "https://mercury-t2.phonepe.com"
+      "https://mercury-t2.phonepe.com",
+      "https://api.phonepe.com/apis/hermes"
     ],
   })
 );
@@ -85,7 +86,7 @@ app.use("/api/v1", user);
 app.use("/api/v1", order);
 // app.use("/api/v1", payment);
 app.use("/api/v1", contact);
-app.use("/api/v1", phonepayPayment);
+app.use("/", phonepayPayment);
 // app.use("/api/v1", payment);
 
 
