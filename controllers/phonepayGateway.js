@@ -42,7 +42,7 @@ exports.initiatePayment = catchAsyncError(async function (req, res, next) {
       merchantTransactionId: merchantTransactionId,
       merchantUserId: userId,
       amount: order.totalPrice * 100, // Price in paise
-      redirectUrl: `${APP_BE_URL}/payment/validate/${merchantTransactionId}`, // Redirect URL post-payment
+      redirectUrl: `https://www.greenglobalaggrovation.com/payment/validate/${merchantTransactionId}`, // Redirect URL post-payment
       redirectMode: "REDIRECT",
       mobileNumber: order.shippingInfo.phoneNo, // Mobile number from order
       paymentInstrument: { type: "PAY_PAGE" },
