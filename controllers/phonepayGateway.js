@@ -77,8 +77,8 @@ exports.initiatePayment = catchAsyncError(async function (req, res, next) {
 
     // Redirect the user to the payment page
     // console.log(paymentResponse);
-    res.json({message:paymentResponse.data.data});
-    // res.redirect(paymentResponse.data.data.instrumentResponse.redirectInfo.url);
+    // res.json({message:paymentResponse.data.data});
+    res.json({message:paymentResponse.data.data.instrumentResponse.redirectInfo.url});
 
   } catch (error) {
     // Handle any error in the try block
