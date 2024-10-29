@@ -74,6 +74,7 @@ app.use(
       "https://greenglobalaggrovation-8129.onrender.com",
       "https://greenglobalaggrovation.com",
       "https://www.greenglobalaggrovation.com",
+      "https://www.greenglobalaggrovation.com/",
       "https://mercury-t2.phonepe.com",
       "https://api.phonepe.com/apis/hermes",
       "https://mercury.phonepe.com"
