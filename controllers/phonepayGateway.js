@@ -19,7 +19,7 @@ exports.initiatePayment = catchAsyncError(async function (req, res, next) {
   try {
     console.log("hello");
     const { orderId, userId } = req.params;
-    console.log(orderId, userId);
+    // console.log(orderId, userId);
 
     if (!orderId || !userId) {
       return res.status(400).json({ message: "Order ID and User ID are required" });
@@ -30,7 +30,7 @@ exports.initiatePayment = catchAsyncError(async function (req, res, next) {
 
     // Fetch order details
     const order = await Order.findById(orderId);
-    console.log({ order });
+    // console.log({ order });
 
     if (!order) {
       return res.status(404).json({ success: false, message: "Order not found" });
@@ -76,6 +76,8 @@ exports.initiatePayment = catchAsyncError(async function (req, res, next) {
     }
 
     // Redirect the user to the payment page
+    // console.log(paymentResponse);
+    // res.json({message:paymentResponse.data.data});
     res.redirect(paymentResponse.data.data.instrumentResponse.redirectInfo.url);
 
   } catch (error) {
