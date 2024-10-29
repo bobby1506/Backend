@@ -9,7 +9,7 @@ const router = express.Router();
 
 router
   .route("/pay/:orderId/:userId")
-  .get(isAuthenticatedUser,initiatePayment);
+  .post(isAuthenticatedUser,initiatePayment);
 
 router.route("/payment/validate/:merchantTransactionId").get(isAuthenticatedUser, validatePayment);
 

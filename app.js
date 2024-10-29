@@ -93,9 +93,9 @@ app.use("/", phonepayPayment);
 
 
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
+// app.get("/", (req, res) => {
+//   res.send("Hello World");
+// });
 
 app.get("*", (req, res, next) => {
   res.status(200).json({
