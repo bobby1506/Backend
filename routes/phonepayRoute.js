@@ -11,6 +11,6 @@ router
   .route("/pay/:orderId/:userId")
   .post(isAuthenticatedUser,initiatePayment);
 
-router.route("/payment/validate/:merchantTransactionId").get(isAuthenticatedUser, validatePayment);
+router.route("/payment/validate/:merchantTransactionId").post(isAuthenticatedUser, validatePayment);
 
 module.exports = router;
