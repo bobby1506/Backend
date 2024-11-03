@@ -7,7 +7,7 @@ const {
 const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 const router = express.Router();
 
-router.route("/pay/:orderId/:userId").post(initiatePayment);
+router.route("/pay/:orderId/:userId").post(isAuthenticatedUser, initiatePayment);
 
 router
   .route("/payment/validate/:merchantTransactionId")
