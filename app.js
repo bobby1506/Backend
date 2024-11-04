@@ -121,7 +121,7 @@ app.post("/pay/:orderId", async function (req, res) {
       merchantUserId: userId.toString(), // Ensure it's a string
       amount: amount * 100, // Convert to paise
       redirectUrl: `https://www.greenglobalaggrovation.com/paymentSuccess/${orderId}`,
-      redirectMode: "POST",
+      redirectMode: "REDIRECT",
       callbackUrl: `${APP_BE_URL}/payment/validate/${merchantTransactionId}/${orderId}`,
       paymentInstrument: {
         type: "PAY_PAGE",
@@ -211,14 +211,14 @@ app.post("/payment/validate/:merchantTransactionId/:orderId", async function (re
         console.log("Payment was successful");
 
         // Update the payment_status in the order
-        order.payment_status = "Success"; // Assuming you have a payment_status field in your order schema
+        order.paymentStatus = "Success"; // Assuming you have a payment_status field in your order schema
         await order.save(); // Save the updated order
 
         console.log("Order payment status updated:", order);
         // return res.redirect("https://www.greenglobalaggrovation.com");
       } else if (response.data && response.data.code === "PAYMENT_FAILED") {
         console.log("Payment failed");
-        order.payment_status = "Failed";
+        order.paymentStatus = "Failed";
         return res.status(400).json({ status: "Payment failed" });
       } else if (response.data && response.data.code === "PAYMENT_PENDING") {
         console.log("Payment is pending. Retrying...");
@@ -227,7 +227,7 @@ app.post("/payment/validate/:merchantTransactionId/:orderId", async function (re
           setTimeout(() => checkPaymentStatus(retryIndex + 1), retryIntervals[retryIndex]);
         } else {
           console.log("Payment status check timed out.");
-          order.payment_status = "Pending";
+          order.paymentStatus = "Pending";
           return res.status(408).json({ error: "Payment status check timed out" });
         }
       } else {
