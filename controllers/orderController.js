@@ -80,34 +80,20 @@ exports.createOrder = async (req, res, next) => {
   }
 };
 
-// exports.placeOrder = catchAsyncErrors(async (req, res, next) => {
-//   const {
-//     shippingInfo,
-//     orderItems,
-//     paymentInfo,
-//     itemsPrice,
-//     taxPrice,
-//     shippingPrice,
-//     totalPrice,
-//   } = req.body;
+// Get logged-in user's orders
+exports.myOrders = catchAsyncErrors(async (req, res, next) => {
+  const { userId } = req.params; // Assuming you're passing userId as a route parameter
 
-//   const order = await Order.create({
-//     shippingInfo,
-//     orderItems,
-//     paymentInfo,
-//     itemsPrice,
-//     taxPrice,
-//     shippingPrice,
-//     totalPrice,
-//     paidAt: Date.now(),
-//     user: req.user,
-//   });
+  // Fetch orders for the specified user ID
+  const orders = await Order.find({ user: userId }).populate("orderItems.product");
 
-//   res.status(201).json({
-//     success: true,
-//     order:"hello",
-//   });
-// });
+
+  res.status(200).json({
+    success: true,
+    orders,
+  });
+});
+
 
 
 //find order
@@ -190,15 +176,7 @@ exports.getSingleOrder = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// get logged in user  Orders
-exports.myOrders = catchAsyncErrors(async (req, res, next) => {
-  const orders = await Order.find({ user: req.user._id });
 
-  res.status(200).json({
-    success: true,
-    orders,
-  });
-});
 
 // get all Orders -- Admin
 exports.getAllOrders = catchAsyncErrors(async (req, res, next) => {

@@ -15,6 +15,8 @@ const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 
 //placed order route phonepay
 router.route("/placeorder/new").post(isAuthenticatedUser, createOrder);
+router.route('/my/orders/:userId').get(isAuthenticatedUser, myOrders); 
+
 router.route("/orderDetails/:orderId").get(isAuthenticatedUser, getOrderDetails);
 
 

@@ -7,6 +7,7 @@ const fileUpload = require("express-fileupload");
 const express = require("express");
 const uniqid = require("uniqid");
 const app = express();
+const Order = require("./models/orderModel");
 
 const errorMiddleware = require("./middleware/error");
 const product = require("./routes/productRoute");
@@ -24,6 +25,7 @@ const contact = require("./routes/contactRoute");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const passport = require("passport");
+const { isAuthenticatedUser } = require("./middleware/auth");
 require("dotenv").config();
 require("./utils/passport");
 
@@ -96,33 +98,43 @@ app.use("/api/v1", order);
 app.use("/api/v1", contact);
 // app.use("", phonepayPayment);
 // Endpoint to initiate payment and send the link to frontend
-app.get("/pay", async function (req, res) {
-  const amount = +req.query.amount;
-  let userId = "MUID123";
-  let merchantTransactionId = uniqid();
-  console.log(merchantTransactionId);
-
-  let normalPayLoad = {
-    merchantId: MERCHANT_ID,
-    merchantTransactionId: merchantTransactionId,
-    merchantUserId: userId,
-    amount: amount * 100,
-    redirectUrl:"https://www.greenglobalaggrovation.com",
-    redirectMode: "POST",
-    callbackUrl: `${APP_BE_URL}/payment/validate/${merchantTransactionId}`,
-    paymentInstrument: {
-      type: "PAY_PAGE",
-    },
-  };
-
-  let bufferObj = Buffer.from(JSON.stringify(normalPayLoad), "utf8");
-  let base64EncodedPayload = bufferObj.toString("base64");
-
-  let string = base64EncodedPayload + "/pg/v1/pay" + SALT_KEY;
-  let sha256_val = sha256(string);
-  let xVerifyChecksum = sha256_val + "###" + SALT_INDEX;
+app.post("/pay/:orderId", isAuthenticatedUser, async function (req, res) {
+  const { orderId } = req.params;
 
   try {
+    // Fetch the order details using the provided order ID
+    const order = await Order.findById(orderId).populate('user'); // Assuming 'user' is populated to get user info
+    console.log(order);
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    const amount = order.totalPrice; // Use the total price from the order
+    const userId = order.user._id; // Get user ID from the populated user field
+    const merchantTransactionId = uniqid();
+    
+    console.log("Merchant Transaction ID:", merchantTransactionId);
+
+    const normalPayLoad = {
+      merchantId: MERCHANT_ID,
+      merchantTransactionId: merchantTransactionId,
+      merchantUserId: userId.toString(), // Ensure it's a string
+      amount: amount * 100, // Convert to paise
+      redirectUrl: "https://www.greenglobalaggrovation.com/status",
+      redirectMode: "POST",
+      callbackUrl: `${APP_BE_URL}/payment/validate/${merchantTransactionId}/${orderId}`,
+      paymentInstrument: {
+        type: "PAY_PAGE",
+      },
+    };
+
+    const bufferObj = Buffer.from(JSON.stringify(normalPayLoad), "utf8");
+    const base64EncodedPayload = bufferObj.toString("base64");
+
+    const string = base64EncodedPayload + "/pg/v1/pay" + SALT_KEY;
+    const sha256_val = sha256(string);
+    const xVerifyChecksum = sha256_val + "###" + SALT_INDEX;
+
     const response = await axios.post(
       `${PHONE_PE_HOST_URL}/pg/v1/pay`,
       { request: base64EncodedPayload },
@@ -134,24 +146,35 @@ app.get("/pay", async function (req, res) {
         },
       }
     );
-    console.log(response.data);
+
+    console.log("Payment initiation response:", response.data);
 
     // Send the payment link to the frontend
     res.json({ paymentUrl: response.data.data.instrumentResponse.redirectInfo.url });
+    
   } catch (error) {
+    console.error("Payment initiation error:", error.message || error);
     res.status(500).json({ error: "Payment initiation failed" });
   }
 });
 
-// Endpoint to validate payment status
-app.post("/payment/validate/:merchantTransactionId", async function (req, res) {
-  const { merchantTransactionId } = req.params;
+
+app.post("/payment/validate/:merchantTransactionId/:orderId", isAuthenticatedUser, async function (req, res) {
+  const { merchantTransactionId, orderId } = req.params;
 
   console.log("Received transaction ID:", merchantTransactionId);
+  console.log("Received order ID:", orderId);
 
-  if (!merchantTransactionId) {
-    console.log("Invalid transaction ID received.");
-    return res.status(400).json({ error: "Invalid transaction ID" });
+  if (!merchantTransactionId || !orderId) {
+    console.log("Invalid transaction ID or order ID received.");
+    return res.status(400).json({ error: "Invalid transaction ID or order ID" });
+  }
+
+  // Fetch the order to validate its existence and retrieve the necessary information
+  const order = await Order.findById(orderId);
+  if (!order) {
+    console.log("Order not found for the given order ID:", orderId);
+    return res.status(404).json({ error: "Order not found" });
   }
 
   const statusUrl = `${PHONE_PE_HOST_URL}/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId;
@@ -186,9 +209,16 @@ app.post("/payment/validate/:merchantTransactionId", async function (req, res) {
 
       if (response.data && response.data.code === "PAYMENT_SUCCESS") {
         console.log("Payment was successful");
-        return res.redirect("https://www.greenglobalaggrovation.com");
+
+        // Update the payment_status in the order
+        order.payment_status = "Success"; // Assuming you have a payment_status field in your order schema
+        await order.save(); // Save the updated order
+
+        console.log("Order payment status updated:", order);
+        // return res.redirect("https://www.greenglobalaggrovation.com");
       } else if (response.data && response.data.code === "PAYMENT_FAILED") {
         console.log("Payment failed");
+        order.payment_status = "Failed";
         return res.status(400).json({ status: "Payment failed" });
       } else if (response.data && response.data.code === "PAYMENT_PENDING") {
         console.log("Payment is pending. Retrying...");
@@ -197,6 +227,7 @@ app.post("/payment/validate/:merchantTransactionId", async function (req, res) {
           setTimeout(() => checkPaymentStatus(retryIndex + 1), retryIntervals[retryIndex]);
         } else {
           console.log("Payment status check timed out.");
+          order.payment_status = "Pending";
           return res.status(408).json({ error: "Payment status check timed out" });
         }
       } else {
