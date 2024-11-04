@@ -1,8 +1,11 @@
 const cors = require("cors");
+const axios = require("axios");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
+const sha256 = require("sha256");
 const fileUpload = require("express-fileupload");
 const express = require("express");
+const uniqid = require("uniqid");
 const app = express();
 
 const errorMiddleware = require("./middleware/error");
