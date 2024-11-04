@@ -100,6 +100,7 @@ app.get("/pay", async function (req, res) {
   const amount = +req.query.amount;
   let userId = "MUID123";
   let merchantTransactionId = uniqid();
+  console.log(merchantTransactionId);
 
   let normalPayLoad = {
     merchantId: MERCHANT_ID,
@@ -107,7 +108,7 @@ app.get("/pay", async function (req, res) {
     merchantUserId: userId,
     amount: amount * 100,
     redirectUrl: `${APP_BE_URL}/payment/validate/${merchantTransactionId}`,
-    redirectMode: "REDIRECT",
+    redirectMode: "POST",
     mobileNumber: "9999999999",
     paymentInstrument: {
       type: "PAY_PAGE",
@@ -133,6 +134,7 @@ app.get("/pay", async function (req, res) {
         },
       }
     );
+    console.log(response.data);
 
     // Send the payment link to the frontend
     res.json({ paymentUrl: response.data.data.instrumentResponse.redirectInfo.url });
