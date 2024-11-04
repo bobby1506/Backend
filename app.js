@@ -147,6 +147,7 @@ app.get("/payment/validate/:merchantTransactionId", async function (req, res) {
 
   if (merchantTransactionId) {
     let statusUrl = `${PHONE_PE_HOST_URL}/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId;
+    console.log(statusUrl);
     let string = `/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId + SALT_KEY;
     let sha256_val = sha256(string);
     let xVerifyChecksum = sha256_val + "###" + SALT_INDEX;
@@ -156,6 +157,7 @@ app.get("/payment/validate/:merchantTransactionId", async function (req, res) {
         headers: {
           "Content-Type": "application/json",
           "X-VERIFY": xVerifyChecksum,
+          "X-MERCHANT-ID":merchantTransactionId,
           accept: "application/json",
         },
       });
