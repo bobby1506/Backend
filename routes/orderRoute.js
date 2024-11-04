@@ -17,7 +17,7 @@ const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 router.route("/placeorder/new").post(isAuthenticatedUser, createOrder);
 router.route('/my/orders/:userId').get(isAuthenticatedUser, myOrders); 
 
-router.route("/orderDetails/:orderId").get(isAuthenticatedUser, getOrderDetails);
+router.route("/order/:orderId").get(isAuthenticatedUser, getOrderDetails);
 
 
 router.route("/order/new").post(isAuthenticatedUser, newOrder);

@@ -120,7 +120,7 @@ app.post("/pay/:orderId", isAuthenticatedUser, async function (req, res) {
       merchantTransactionId: merchantTransactionId,
       merchantUserId: userId.toString(), // Ensure it's a string
       amount: amount * 100, // Convert to paise
-      redirectUrl: "https://www.greenglobalaggrovation.com/status",
+      redirectUrl: `https://www.greenglobalaggrovation.com/paymentSuccess/${orderId}`,
       redirectMode: "POST",
       callbackUrl: `${APP_BE_URL}/payment/validate/${merchantTransactionId}/${orderId}`,
       paymentInstrument: {
@@ -159,7 +159,7 @@ app.post("/pay/:orderId", isAuthenticatedUser, async function (req, res) {
 });
 
 
-app.post("/payment/validate/:merchantTransactionId/:orderId", isAuthenticatedUser, async function (req, res) {
+app.post("/payment/validate/:merchantTransactionId/:orderId", async function (req, res) {
   const { merchantTransactionId, orderId } = req.params;
 
   console.log("Received transaction ID:", merchantTransactionId);

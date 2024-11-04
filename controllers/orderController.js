@@ -108,7 +108,7 @@ exports.getOrderDetails = catchAsyncErrors(async (req, res, next) => {
 
   try {
     // Find the order by ID in the database
-    const order = await Order.findById(orderId).populate('user', 'name email'); // Populate user if needed
+    const order = await Order.findById(orderId); // Populate user if needed
 
     // If order is not found, send an error response
     if (!order) {
