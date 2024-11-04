@@ -141,25 +141,69 @@ app.get("/pay", async function (req, res) {
   }
 });
 
+// // Endpoint to validate payment status
+// app.get("/payment/validate/:merchantTransactionId", async function (req, res) {
+//   const { merchantTransactionId } = req.params;
+
+//   console.log(merchantTransactionId);
+
+//   if (merchantTransactionId) {
+//     console.log("🫠🫠");
+//     let statusUrl = `${PHONE_PE_HOST_URL}/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId;
+//     console.log(statusUrl);
+//     let string = `/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId + SALT_KEY;
+//     let sha256_val = sha256(string);
+//     let xVerifyChecksum = sha256_val + "###" + SALT_INDEX;
+
+//   console.log("hello1");
+
+//     try {
+//       console.log("hello2");
+
+//       const response = await axios.get(statusUrl, {
+//         headers: {
+//           "Content-Type": "application/json",
+//           "X-VERIFY": xVerifyChecksum,
+//           "X-MERCHANT-ID":merchantTransactionId,
+//           accept: "application/json",
+//         },
+//       });
+//       console.log(response);
+//       if (response.data && response.data.code === "PAYMENT_SUCCESS") {
+//         // Redirect to the specified URL on successful payment
+//         res.redirect("https://www.greenglobalaggrovation.com");
+//       } else {
+//         res.send("Payment failed or is pending");
+//       }
+//     } catch (error) {
+//       res.status(500).json({ error: "Payment status check failed" });
+//     }
+//   } else {
+//     res.status(400).send("Invalid transaction ID");
+//   }
+// });
+
+//////
 // Endpoint to validate payment status
 app.get("/payment/validate/:merchantTransactionId", async function (req, res) {
   const { merchantTransactionId } = req.params;
-
   console.log(merchantTransactionId);
+  
+  if (!merchantTransactionId) {
+    return res.status(400).send("Invalid transaction ID");
+  }
 
-  if (merchantTransactionId) {
-    console.log("🫠🫠");
-    let statusUrl = `${PHONE_PE_HOST_URL}/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId;
-    console.log(statusUrl);
-    let string = `/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId + SALT_KEY;
-    let sha256_val = sha256(string);
-    let xVerifyChecksum = sha256_val + "###" + SALT_INDEX;
+  let statusUrl = `${PHONE_PE_HOST_URL}/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId;
+  console.log("🫠🫠");
+  let string = `/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId + SALT_KEY;
+  let sha256_val = sha256(string);
+  let xVerifyChecksum = sha256_val + "###" + SALT_INDEX;
 
-  console.log("hello1");
+  let maxRetries = 3;
+  let attempt = 0;
 
+  while (attempt < maxRetries) {
     try {
-      console.log("hello2");
-
       const response = await axios.get(statusUrl, {
         headers: {
           "Content-Type": "application/json",
@@ -168,21 +212,27 @@ app.get("/payment/validate/:merchantTransactionId", async function (req, res) {
           accept: "application/json",
         },
       });
-      console.log(response);
+
+      console.log("Payment status response:", response.data);
+
       if (response.data && response.data.code === "PAYMENT_SUCCESS") {
-        // Redirect to the specified URL on successful payment
-        res.redirect("https://www.greenglobalaggrovation.com");
+        return res.redirect("https://www.greenglobalaggrovation.com");
+      } else if (response.data && response.data.code === "PAYMENT_PENDING") {
+        // Optional: Return a pending status if you don't want to retry in case of pending
+        return res.send("Payment is still pending");
       } else {
-        res.send("Payment failed or is pending");
+        return res.send("Payment failed or is pending");
       }
     } catch (error) {
-      res.status(500).json({ error: "Payment status check failed" });
+      console.error(`Attempt ${attempt + 1} failed:`, error.message);
+      attempt++;
+      if (attempt >= maxRetries) {
+        return res.status(500).json({ error: "Payment status check failed after multiple attempts" });
+      }
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retrying
     }
-  } else {
-    res.status(400).send("Invalid transaction ID");
   }
 });
-
 
 
 app.get("*", (req, res, next) => {
