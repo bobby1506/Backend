@@ -145,14 +145,21 @@ app.get("/pay", async function (req, res) {
 app.get("/payment/validate/:merchantTransactionId", async function (req, res) {
   const { merchantTransactionId } = req.params;
 
+  console.log(merchantTransactionId);
+
   if (merchantTransactionId) {
+    console.log("🫠🫠");
     let statusUrl = `${PHONE_PE_HOST_URL}/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId;
     console.log(statusUrl);
     let string = `/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId + SALT_KEY;
     let sha256_val = sha256(string);
     let xVerifyChecksum = sha256_val + "###" + SALT_INDEX;
 
+  console.log("hello1");
+
     try {
+      console.log("hello2");
+
       const response = await axios.get(statusUrl, {
         headers: {
           "Content-Type": "application/json",
@@ -161,7 +168,7 @@ app.get("/payment/validate/:merchantTransactionId", async function (req, res) {
           accept: "application/json",
         },
       });
-
+      console.log(response);
       if (response.data && response.data.code === "PAYMENT_SUCCESS") {
         // Redirect to the specified URL on successful payment
         res.redirect("https://www.greenglobalaggrovation.com");
