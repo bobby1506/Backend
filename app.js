@@ -149,15 +149,30 @@ app.post("/payment/validate/:merchantTransactionId", async function (req, res) {
 
   console.log("Received transaction ID:", merchantTransactionId);
 
-  if (merchantTransactionId) {
-    const statusUrl = `${PHONE_PE_HOST_URL}/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId;
-    const string = `/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId + SALT_KEY;
-    const sha256_val = sha256(string);
-    const xVerifyChecksum = sha256_val + "###" + SALT_INDEX;
+  if (!merchantTransactionId) {
+    console.log("Invalid transaction ID received.");
+    return res.status(400).json({ error: "Invalid transaction ID" });
+  }
 
-    console.log("Generated status URL:", statusUrl);
-    console.log("Generated X-VERIFY checksum:", xVerifyChecksum);
+  const statusUrl = `${PHONE_PE_HOST_URL}/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId;
+  const string = `/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId + SALT_KEY;
+  const sha256_val = sha256(string);
+  const xVerifyChecksum = sha256_val + "###" + SALT_INDEX;
 
+  console.log("Generated status URL:", statusUrl);
+  console.log("Generated X-VERIFY checksum:", xVerifyChecksum);
+
+  // Retry intervals (in ms)
+  const retryIntervals = [
+    20000, 25000, // First check between 20-25 seconds
+    3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, // Every 3 seconds for 30 seconds
+    6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, // Every 6 seconds for 60 seconds
+    10000, 10000, 10000, 10000, 10000, 10000, // Every 10 seconds for 60 seconds
+    30000, 30000, // Every 30 seconds for 60 seconds
+    60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000 // Every 1 minute until timeout
+  ];
+
+  async function checkPaymentStatus(retryIndex = 0) {
     try {
       const response = await axios.get(statusUrl, {
         headers: {
@@ -171,22 +186,31 @@ app.post("/payment/validate/:merchantTransactionId", async function (req, res) {
 
       if (response.data && response.data.code === "PAYMENT_SUCCESS") {
         console.log("Payment was successful");
-        // res.redirect("https://www.greenglobalaggrovation.com");
+        return res.redirect("https://www.greenglobalaggrovation.com");
+      } else if (response.data && response.data.code === "PAYMENT_FAILED") {
+        console.log("Payment failed");
+        return res.status(400).json({ status: "Payment failed" });
       } else if (response.data && response.data.code === "PAYMENT_PENDING") {
-        console.log("Payment is pending. Retrying will be necessary.");
-        res.status(202).json({ status: "Payment pending, please retry later" });
+        console.log("Payment is pending. Retrying...");
+        
+        if (retryIndex < retryIntervals.length) {
+          setTimeout(() => checkPaymentStatus(retryIndex + 1), retryIntervals[retryIndex]);
+        } else {
+          console.log("Payment status check timed out.");
+          return res.status(408).json({ error: "Payment status check timed out" });
+        }
       } else {
-        console.log("Payment failed or other status received");
-        res.status(400).json({ status: "Payment failed" });
+        console.log("Unexpected status received");
+        return res.status(400).json({ status: "Unexpected status received" });
       }
     } catch (error) {
       console.error("Error during payment status check:", error.message || error);
-      res.status(500).json({ error: "Payment status check failed" });
+      return res.status(500).json({ error: "Payment status check failed" });
     }
-  } else {
-    console.log("Invalid transaction ID received.");
-    res.status(400).json({ error: "Invalid transaction ID" });
   }
+
+  // Start the first status check
+  checkPaymentStatus();
 });
 
 
