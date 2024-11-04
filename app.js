@@ -144,49 +144,67 @@ app.get("/pay", async function (req, res) {
 });
 
 // Endpoint to validate payment status
+// Endpoint to validate payment status with retries for Pending status
 app.post("/payment/validate/:merchantTransactionId", async function (req, res) {
   const { merchantTransactionId } = req.params;
 
+  if (!merchantTransactionId) {
+    return res.status(400).send("Invalid transaction ID");
+  }
   console.log(merchantTransactionId);
 
-  if (merchantTransactionId) {
-    console.log("🫠🫠");
+  // Status check retry intervals based on the specifications
+  const retryIntervals = [
+    20000, // 20 seconds after transaction start
+    3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, // 3 seconds, 10 times
+    6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, // 6 seconds, 10 times
+    10000, 10000, 10000, 10000, 10000, 10000, // 10 seconds, 6 times
+    30000, 30000 // 30 seconds, 2 times
+  ];
+
+  let attempt = 0; // Track attempt count
+
+  const checkPaymentStatus = async () => {
+    console.log("Step-1");
     let statusUrl = `${PHONE_PE_HOST_URL}/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId;
-    console.log(statusUrl);
     let string = `/pg/v1/status/${MERCHANT_ID}/` + merchantTransactionId + SALT_KEY;
     let sha256_val = sha256(string);
     let xVerifyChecksum = sha256_val + "###" + SALT_INDEX;
 
-  console.log("hello1");
-
     try {
-      console.log("hello2");
-
+      console.log("Step-2");
       const response = await axios.get(statusUrl, {
-        
         headers: {
           "Content-Type": "application/json",
           "X-VERIFY": xVerifyChecksum,
-          "X-MERCHANT-ID":merchantTransactionId,
-          accept: "application/json",
+          "X-MERCHANT-ID": MERCHANT_ID,
         },
-        
       });
-      console.log("🥺🥺🥺");
       console.log(response.data);
-      if (response.data && response.data.code === "PAYMENT_SUCCESS") {
-        // Redirect to the specified URL on successful payment
+      const paymentStatus = response.data.code;
+
+      if (paymentStatus === "PAYMENT_SUCCESS") {
         res.redirect("https://www.greenglobalaggrovation.com");
+      } else if (paymentStatus === "PAYMENT_FAILED") {
+        res.send("Payment failed");
+      } else if (paymentStatus === "PAYMENT_PENDING" && attempt < retryIntervals.length) {
+        // Schedule the next retry after the current interval
+        setTimeout(() => {
+          attempt++;
+          checkPaymentStatus();
+        }, retryIntervals[attempt]);
       } else {
-        res.send("Payment failed or is pending");
+        res.send("Payment status is still pending after maximum retries");
       }
     } catch (error) {
       res.status(500).json({ error: "Payment status check failed" });
     }
-  } else {
-    res.status(400).send("Invalid transaction ID");
-  }
+  };
+
+  // Start the first status check with a 20-second delay
+  setTimeout(checkPaymentStatus, retryIntervals[0]);
 });
+
 
 
 
@@ -199,4 +217,3 @@ app.get("*", (req, res, next) => {
 app.use(errorMiddleware);
 
 module.exports = app;
-
