@@ -98,7 +98,7 @@ app.use("/api/v1", order);
 app.use("/api/v1", contact);
 // app.use("", phonepayPayment);
 // Endpoint to initiate payment and send the link to frontend
-app.post("/pay/:orderId", isAuthenticatedUser, async function (req, res) {
+app.post("/pay/:orderId", async function (req, res) {
   const { orderId } = req.params;
 
   try {
